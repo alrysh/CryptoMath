@@ -18,6 +18,7 @@ bool millerRabinTest(uint64_t n, int k = 20) {
         if (n % p == 0) return false;
     }
 
+    // Представляем n - 1 как d * 2^s
     uint64_t d = n - 1;
     int s = 0;
     while ((d & 1) == 0) {
@@ -31,31 +32,30 @@ bool millerRabinTest(uint64_t n, int k = 20) {
 
     for (int i = 0; i < k; ++i) {
         uint64_t a = dis(gen);
-        uint64_t x;
+        uint64_t x = 0;
+        
+        // x = (a^d) % n
         fast_pow_mod(a, d, n, &x);
 
         if (x == 1 || x == n - 1) {
             continue;
         }
 
-        bool composite = true;
+        bool passed_round = false;
         for (int r = 1; r < s; ++r) {
-            x = prevention_overflow_mod(x, x, n); 
+            x = prevention_overflow_mod(x, x, n); // x = (x * x) % n
             if (x == n - 1) {
-                composite = false;
+                passed_round = true;
                 break;
-            }
-            if (x == 1) {
-                return false;
             }
         }
 
-        if (composite) {
+        if (!passed_round) {
             return false;
         }
     }
 
-    return true;
+    return true; // Число вероятнее всего простое
 }
 
 uint64_t getRandom64(uint64_t min_val, uint64_t max_val) {
@@ -65,16 +65,49 @@ uint64_t getRandom64(uint64_t min_val, uint64_t max_val) {
     return dis(gen);
 }
 
+// uint64_t generate_p(uint64_t *out_q) {
+//     while (true) {
+//         // случайное нечетное q (ограничить диапазон, чтобы 2q + 1 не переполнило uint64)
+//         uint64_t q = getRandom64(100000000ULL, 0x7FFFFFFFFFFFFFFFULL) | 1;
+
+//         if (millerRabinTest(q)) {
+//             uint64_t p = 2 * q + 1;
+//             if (millerRabinTest(p)) {
+//                 // q пригодится для генерации g
+//                 if (out_q) *out_q = q; 
+//                 return p;
+//             }
+//         }
+//     }
+// }
+
+// uint64_t generate_p(uint64_t *out_q) {
+//     while (true) {
+//         // Ставим нижнюю границу 5 000 000 000 (гарантированно > UINT32_MAX)
+//         uint64_t p = getRandom64(4294967300ULL, 10000000000ULL);
+        
+//         if (p % 2 == 0) p++; 
+
+//         if (millerRabinTest(p, 20)) {
+//             return p;
+//         }
+//     }
+// }
+
+//переписать на generate_p(uint64_t min_val, uint64_t max_val);
 uint64_t generate_p(uint64_t *out_q) {
     while (true) {
-        // случайное нечетное q (ограничить диапазон, чтобы 2q + 1 не переполнило uint64)
-        uint64_t q = getRandom64(100000000ULL, 0x7FFFFFFFFFFFFFFFULL) | 1;
+        uint64_t p = getRandom64(4294967300ULL, 8000000000ULL);
+        if (p % 2 == 0) p++;
 
-        if (millerRabinTest(q)) {
-            uint64_t p = 2 * q + 1;
-            if (millerRabinTest(p)) {
-                // q пригодится для генерации g
-                if (out_q) *out_q = q; 
+        if (millerRabinTest(p, 20)) {
+            uint64_t q = (p - 1) / 2;
+            
+            // Проверяем q = (p - 1) / 2 на простоту
+            if (millerRabinTest(q, 20)) {
+                if (out_q != nullptr) {
+                    *out_q = q;
+                }
                 return p;
             }
         }

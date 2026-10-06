@@ -3,11 +3,16 @@
 
 uint64_t prevention_overflow_mod(uint64_t a, uint64_t b, uint64_t mod)
 {
-    return ((uint64_t)((__int128_t)a * b) % mod);
+    if (mod == 0) return 0;
+    return static_cast<uint64_t>((static_cast<__int128_t>(a) * b) % mod);
 }
+
+
 
 int fast_pow_mod(uint64_t a, uint64_t exp, uint64_t mod, uint64_t *y)
 {
+    if (!y) return -1;
+
     if (mod == 0)
     {
         fprintf(stderr, "division by zero\n");
@@ -23,8 +28,16 @@ int fast_pow_mod(uint64_t a, uint64_t exp, uint64_t mod, uint64_t *y)
         *y = 1;
         return 0;
     }
-    *y = 1;
+    
     a %= mod;
+
+    if (a == 0)
+    {
+        *y = 0;
+        return 0;
+    }
+
+    *y = 1;
     while (exp > 0)
     {
         if (exp & 1)
@@ -35,4 +48,18 @@ int fast_pow_mod(uint64_t a, uint64_t exp, uint64_t mod, uint64_t *y)
         exp >>= 1;
     }
     return 0;
+}
+
+void fast_pow_mod_128(__int128_t base, __int128_t exp, __int128_t mod, __int128_t* res) {
+    if (!res || mod == 0) return;
+    __int128_t result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    *res = result;
 }

@@ -4,10 +4,12 @@
 #include <stdlib.h>
 
 int gcd(uint64_t a, uint64_t b, uint64_t *res) {
-  if (a < b) {
-    fprintf(stderr, "Euclid's algorithm requires that a >= b\n");
-    return -1;
-  }
+  // if (a < b) {
+  //   fprintf(stderr, "Euclid's algorithm requires that a >= b\n");
+  //   return -1;
+  // }
+  if (res == nullptr) return -1;
+  
   uint64_t cur = 0;
   while (b != 0) {
     cur = a % b;
@@ -16,6 +18,55 @@ int gcd(uint64_t a, uint64_t b, uint64_t *res) {
   }
   *res = a;
   return 0;
+}
+
+__int128_t gcd_128(__int128_t a, __int128_t b,__int128_t *res) {
+  if (res == nullptr) return -1;
+  
+  __int128_t cur = 0;
+  while (b != 0) {
+    cur = a % b;
+    a = b;
+    b = cur;
+  }
+  *res = a;
+  return 0;
+}
+
+// Расширенный алгоритм Евклида
+// дополнительно находит целые коэффициенты x и y для соотношения Безу:a*x + b*y = gcd(a, b)
+
+uint64_t advanced_euclid(uint64_t c, uint64_t mod_val) {
+    int64_t a = static_cast<int64_t>(c);
+    int64_t b = static_cast<int64_t>(mod_val);
+
+    int64_t x0 = 1, x1 = 0;
+    int64_t y0 = 0, y1 = 1;
+
+    int64_t m0 = b;
+
+    while (b != 0) {
+        int64_t q = a / b;
+        int64_t r = a % b;
+
+        a = b;
+        b = r;
+
+        int64_t temp_x = x0 - q * x1;
+        x0 = x1;
+        x1 = temp_x;
+
+        int64_t temp_y = y0 - q * y1;
+        y0 = y1;
+        y1 = temp_y;
+    }
+
+    // x0 содержит искомый коэффициент Безу для 'c'
+    if (x0 < 0) {
+        x0 += m0;
+    }
+
+    return static_cast<uint64_t>(x0);
 }
 
 int egcd(uint64_t *x, uint64_t *y, uint64_t *res_gcd) {
