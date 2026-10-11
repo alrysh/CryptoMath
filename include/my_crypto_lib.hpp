@@ -68,6 +68,7 @@ void rsa(bool user_input, std::string& in, std::string& out);
 void stream_file_rsa(const std::string& infile, const std::string& outfile, 
                     uint64_t Db, uint64_t Cb, uint64_t N);
 __int128_t generate_pair_gcd_128(__int128_t phi);
+uint64_t generate_p_rsa(uint64_t *out_q);
 
 
 #endif

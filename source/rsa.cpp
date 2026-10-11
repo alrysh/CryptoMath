@@ -66,7 +66,7 @@ B: e^c = mod N
 
 
 void stream_file_rsa(const std::string& infile, const std::string& outfile, 
-                     uint64_t Db, uint64_t Cb, __int128_t N) {
+                     uint64_t Db, uint64_t Cb, uint64_t N) {
 
     std::ifstream in(infile, std::ios::binary);
     std::ofstream out(outfile, std::ios::binary);
@@ -155,22 +155,42 @@ __int128_t generate_pair_gcd_128(__int128_t phi) {
     if (phi <= 3) return 0;
     
     while (true) {
-        // Генерируем 64-битное случайное число, т.к. d должно помещаться в uint64_t
-        // В RSA часто берут небольшие e (например, от 3 до 65537 или до uint64_max)
-        uint64_t C = getRandom64(3, 65537);
-        if (C % 2 == 0) C++; // Делаем нечётным для скорости
+        uint64_t val = getRandom64(3, 65537);
+        if (val % 2 == 0) val++;
+        //uint64_t val = 65537;
         
         __int128_t res_gcd = 0;
-        gcd_128(C, phi, &res_gcd);
+        gcd_128(val, phi, &res_gcd);
         if (res_gcd == 1) {
-            return C;
+            return val;
         }
     }
 }
 
+uint64_t generate_p_rsa(uint64_t *out_q) {
+    while (true) {
+        uint64_t p = getRandom64(65537, 2147483647);
+        if (p % 2 == 0) p++;
+
+        if (millerRabinTest(p, 20)) {
+            uint64_t q = (p - 1) / 2;
+            
+            //Проверяем q = (p - 1) / 2 на простоту
+            if (millerRabinTest(q, 20)) {
+                if (out_q != nullptr) {
+                    *out_q = q;
+                }
+                return p;
+            }
+        }
+    }
+}
+
+
 void rsa(bool user_input, std::string& in, std::string& out) {
-    uint64_t p = 0, q = 0, Db = 0, Cb = 0; //, Da = 0
-    __int128_t N = 0, f = 0;
+    uint64_t p = 0, q = 0, N = 0, Db = 0, Cb = 0; //, Da = 0
+    //__int128_t f = 0;
+    uint64_t f = 0;
 
     if (user_input) {
         std::cout << "Enter args: p, q, Db: ";
@@ -185,28 +205,28 @@ void rsa(bool user_input, std::string& in, std::string& out) {
         Db = input[2];
 
         N = p * q;
-        f = static_cast<__int128_t>(p - 1) * static_cast<__int128_t>(q - 1);
+        //f = static_cast<__int128_t>(p - 1) * static_cast<__int128_t>(q - 1);
+        f = (p - 1) * (q - 1);
+
 
         if (!check_users_args(p) || !check_users_args(q)) {
             std::cout << "Warning: Input p or q is not prime!\n";
         }
 
         Cb = advanced_euclid(Db, f);
+        std::cout << "C (Bob)  = " << Cb << "\n\n";
 
     } else {
         std::cout << "Genearate P_ & Q_\n";
 
-        p = generate_p(nullptr);
-        q = generate_p(nullptr);
+        p = generate_p_rsa(nullptr);
+        q = generate_p_rsa(nullptr);
 
         N = p * q;
-        f = static_cast<__int128_t>(p-1)*static_cast<__int128_t>(q-1);
+        f = (p - 1) * (q - 1);
 
         // d : gcd((N), d) = 1, d < phi
-
-        do {
-            Db = generate_pair_gcd_128(f);
-        } while (Db >= static_cast<uint64_t>(f) || Db == 0);
+        Db = generate_pair_gcd_128(f);
 
         Cb = advanced_euclid(Db, f);
 
@@ -216,8 +236,8 @@ void rsa(bool user_input, std::string& in, std::string& out) {
         //     std::cerr << "CRITICAL: Extended Euclid calculated wrong D!\n";
         // }
 
-        std::cout << "p (Alice) = " << p << "\n";
-        std::cout << "q (Alice) = " << q << "\n";
+        std::cout << "p = " << p << "\n";
+        std::cout << "q = " << q << "\n";
         std::cout << "D (Bob) = " << Db << "\n";
         std::cout << "C (Bob)  = " << Cb << "\n\n";
     }

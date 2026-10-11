@@ -155,7 +155,7 @@ void elgamal_key(bool user_input, std::string& in, std::string& out) {
     } else {
         std::cout << "Generate p, g, x, y (ElGamal)\n";
 
-        p = generate_p(nullptr); 
+        //p = generate_p(nullptr); 
         
         uint64_t q = 0;
         p = generate_p(&q);

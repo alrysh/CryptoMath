@@ -35,7 +35,6 @@ __int128_t gcd_128(__int128_t a, __int128_t b,__int128_t *res) {
 
 // Расширенный алгоритм Евклида
 // дополнительно находит целые коэффициенты x и y для соотношения Безу:a*x + b*y = gcd(a, b)
-
 uint64_t advanced_euclid(uint64_t c, uint64_t mod_val) {
     int64_t a = static_cast<int64_t>(c);
     int64_t b = static_cast<int64_t>(mod_val);
