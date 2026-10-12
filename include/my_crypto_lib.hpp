@@ -70,5 +70,9 @@ void stream_file_rsa(const std::string& infile, const std::string& outfile,
 __int128_t generate_pair_gcd_128(__int128_t phi);
 uint64_t generate_p_rsa(uint64_t *out_q);
 
+void stream_file_vernam(const std::string& infile, const std::string& outfile, 
+                     uint64_t K);
+void vernam(std::string& in, std::string& out);
+
 
 #endif

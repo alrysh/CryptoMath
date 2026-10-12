@@ -95,6 +95,7 @@ uint64_t getRandom64(uint64_t min_val, uint64_t max_val) {
 // }
 
 //переписать на generate_p(uint64_t min_val, uint64_t max_val);
+//поменять в generate_p_rsa
 uint64_t generate_p(uint64_t *out_q) {
     while (true) {
         uint64_t p = getRandom64(4294967300ULL, 8000000000ULL);
