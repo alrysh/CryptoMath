@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 uint64_t prevention_overflow_mod(uint64_t a, uint64_t b, uint64_t mod);
 int fast_pow_mod(uint64_t a, uint64_t exp, uint64_t mod, uint64_t *y);
@@ -73,6 +74,22 @@ uint64_t generate_p_rsa(uint64_t *out_q);
 void stream_file_vernam(const std::string& infile, const std::string& outfile, 
                      uint64_t K);
 void vernam(std::string& in, std::string& out);
+uint64_t generate_dh_shared_key(uint64_t p, uint64_t g);
+void vernam(std::string &in, std::string &out);
 
+
+std::vector<uint8_t> compute_file_hash_sha256(const std::string& filepath);
+
+void print_hex_digest(const std::vector<uint8_t>& digest);
+bool sign_file_rsa(const std::string& doc_path, const std::string& sig_path, uint64_t c, uint64_t N);
+bool verify_file_rsa(const std::string& doc_path, const std::string& sig_path, uint64_t d, uint64_t N);
+void rsa_signature(bool user_input, const std::string& doc_file, const std::string& sig_file);
+
+//9
+bool sign_file_elgamal(const std::string& doc_path, const std::string& sig_path,
+                       uint64_t x, uint64_t p, uint64_t g);
+bool verify_file_elgamal(const std::string& doc_path, const std::string& sig_path,
+                         uint64_t y, uint64_t p, uint64_t g);
+void elgamal_signature(bool user_input, const std::string& doc_file, const std::string& sig_file);
 
 #endif
