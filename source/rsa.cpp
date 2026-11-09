@@ -151,40 +151,40 @@ void stream_file_rsa(const std::string& infile, const std::string& outfile,
     std::cout << "========================\n\n";
 }
 
-__int128_t generate_pair_gcd_128(__int128_t phi) {
-    if (phi <= 3) return 0;
+// __int128_t generate_pair_gcd_128(__int128_t phi) {
+//     if (phi <= 3) return 0;
     
-    while (true) {
-        uint64_t val = getRandom64(3, 65537);
-        if (val % 2 == 0) val++;
-        //uint64_t val = 65537;
+//     while (true) {
+//         uint64_t val = getRandom64(3, 65537);
+//         if (val % 2 == 0) val++;
+//         //uint64_t val = 65537;
         
-        __int128_t res_gcd = 0;
-        gcd_128(val, phi, &res_gcd);
-        if (res_gcd == 1) {
-            return val;
-        }
-    }
-}
+//         __int128_t res_gcd = 0;
+//         gcd_128(val, phi, &res_gcd);
+//         if (res_gcd == 1) {
+//             return val;
+//         }
+//     }
+// }
 
-uint64_t generate_p_rsa(uint64_t *out_q) {
-    while (true) {
-        uint64_t p = getRandom64(65537, 2147483647);
-        if (p % 2 == 0) p++;
+// uint64_t generate_p_rsa(uint64_t *out_q) {
+//     while (true) {
+//         uint64_t p = getRandom64(65537, 2147483647);
+//         if (p % 2 == 0) p++;
 
-        if (millerRabinTest(p, 20)) {
-            uint64_t q = (p - 1) / 2;
+//         if (millerRabinTest(p, 20)) {
+//             uint64_t q = (p - 1) / 2;
             
-            //Проверяем q = (p - 1) / 2 на простоту
-            if (millerRabinTest(q, 20)) {
-                if (out_q != nullptr) {
-                    *out_q = q;
-                }
-                return p;
-            }
-        }
-    }
-}
+//             //Проверяем q = (p - 1) / 2 на простоту
+//             if (millerRabinTest(q, 20)) {
+//                 if (out_q != nullptr) {
+//                     *out_q = q;
+//                 }
+//                 return p;
+//             }
+//         }
+//     }
+//}
 
 
 void rsa(bool user_input, std::string& in, std::string& out) {

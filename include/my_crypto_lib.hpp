@@ -92,4 +92,11 @@ bool verify_file_elgamal(const std::string& doc_path, const std::string& sig_pat
                          uint64_t y, uint64_t p, uint64_t g);
 void elgamal_signature(bool user_input, const std::string& doc_file, const std::string& sig_file);
 
+//10
+bool sign_file_gost(const std::string& doc_path, const std::string& sig_path,
+                    uint64_t x, uint64_t p, uint64_t q, uint64_t a);
+bool verify_file_gost(const std::string& doc_path, const std::string& sig_path,
+                      uint64_t y, uint64_t p, uint64_t q, uint64_t a);
+void gost_signature(bool user_input, const std::string& doc_file, const std::string& sig_file);
+
 #endif
